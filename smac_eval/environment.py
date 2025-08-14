@@ -6,7 +6,7 @@ from gymnasium import spaces
 from sample_factory.envs.env_utils import register_env
 from smacv2.env import StarCraftCapabilityEnvWrapper
 
-from smac.training_config import SMACv2Config
+from smac_eval.training_config import SMACv2Config
 
 
 def get_smacv2_obs_shape(cfg: SMACv2Config) -> int:

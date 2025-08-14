@@ -1,8 +1,19 @@
 from sys import argv
 
-from smac.environment import get_smacv2_obs_shape
-from smac.training_config import ExperimentSMACv2Config, SMACv2Config
-from smac.training_utils import create_sf_config_smacv2, run_smacv2
+from sample_factory.cfg.arguments import parse_full_cfg, parse_sf_args
+
+from smac_eval.environment import get_smacv2_obs_shape
+from smac_eval.training_config import ExperimentSMACv2Config, SMACv2Config
+from smac_eval.training_utils import run_smacv2
+
+from srmt.model import TransformerCore
+
+def create_sf_config_smacv2(exp: ExperimentSMACv2Config):
+    custom_argv = [f'--env={exp.env}']
+    parser, partial_cfg = parse_sf_args(argv=custom_argv, evaluation=False)
+    parser.set_defaults(**exp.dict())
+    final_cfg = parse_full_cfg(parser, argv=custom_argv)
+    return final_cfg
 
 def recursive_update(experiment: dict, key, value):
     if key in experiment:

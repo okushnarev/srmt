@@ -6,7 +6,7 @@ from sample_factory.utils.typing import Config, ObsSpace, PolicyID
 from sample_factory.utils.utils import log
 from tensorboardX import SummaryWriter
 
-from smac.encoder import FCNNEncoder
+from smac_eval.encoder import FCNNEncoder
 
 
 def register_msg_handlers(cfg: Config, runner: Runner):

@@ -6,19 +6,14 @@ from sample_factory.cfg.arguments import parse_full_cfg, parse_sf_args
 from sample_factory.train import make_runner
 from sample_factory.utils.utils import log
 
-from smac.environment import register_smacv2_env
-from smac.register_training_utils import register_custom_encoder, register_msg_handlers
+from smac_eval.environment import register_smacv2_env
+from smac_eval.register_training_utils import register_custom_encoder, register_msg_handlers
+from smac_eval.train_smac import create_sf_config_smacv2
 
-from smac.training_config import ExperimentSMACv2Config
+from smac_eval.training_config import ExperimentSMACv2Config
 from srmt.register_training_utils import register_custom_core
 
 
-def create_sf_config_smacv2(exp: ExperimentSMACv2Config):
-    custom_argv = [f'--env={exp.env}']
-    parser, partial_cfg = parse_sf_args(argv=custom_argv, evaluation=False)
-    parser.set_defaults(**exp.dict())
-    final_cfg = parse_full_cfg(parser, argv=custom_argv)
-    return final_cfg
 
 
 def run_smacv2(config=None):

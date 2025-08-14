@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, validator
 
-from smac.encoder import FCNNEncoderConfig
+from smac_eval.encoder import FCNNEncoderConfig
 from srmt.model import CoreConfig
 
 
@@ -78,17 +78,16 @@ class EnvironmentSMACv2Config(BaseModel):
 class ExperimentSMACv2Config(BaseModel):
     environment: EnvironmentSMACv2Config = EnvironmentSMACv2Config()
     encoder: FCNNEncoderConfig = FCNNEncoderConfig(
-        num_outputs=16,  # Must be equal core_hidden_size
-        hidden_layers=[32, 32],
+        num_outputs=256,  # Must be equal core_hidden_size
+        hidden_layers=[64, 128],
         dropout=0.1,
     )
 
-    batch_size: int = 9000
 
     core: CoreConfig = CoreConfig(
-        core_hidden_size=16,
-        num_attention_heads=4,
-        max_position_embeddings=9000,
+        core_hidden_size=256,
+        num_attention_heads=8,
+        max_position_embeddings=16384,
     )
 
     attn_core: bool = True
@@ -112,6 +111,7 @@ class ExperimentSMACv2Config(BaseModel):
     exploration_loss_coeff: float = 0.03
     learning_rate: float = 0.0002
     gamma: float = 0.9716
+    batch_size: int = 9000
 
     force_envs_single_thread: bool = True
     optimizer: Literal['adam', 'lamb'] = 'adam'
@@ -128,7 +128,7 @@ class ExperimentSMACv2Config(BaseModel):
     save_milestones_sec: int = -1
     save_every_sec: int = 60
 
-    keep_checkpoints: int = 1_000_000
+    keep_checkpoints: int = 5
     stats_avg: int = 10
     train_for_env_steps: int = 15_000_000
 
