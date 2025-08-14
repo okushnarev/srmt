@@ -196,7 +196,7 @@ dependencies:
       - prometheus-client==0.20.0
       - promise==2.3
       - prompt-toolkit==3.0.47
-      - protobuf==4.25.4
+      - protobuf
       - psutil==6.0.0
       - ptyprocess==0.7.0
       - pure-eval==0.2.3
@@ -234,7 +234,7 @@ dependencies:
       - s3transfer==0.10.2
       - sacred==0.8.0
       - safetensors==0.4.3
-      - git+https://github.com/Aloriosa/sample-factory.git@4ff4e5e65392104af23c7966c9474b034e84155c
+      - git+https://github.com/okushnarev/sample-factory.git
       - scikit-learn==1.5.1
       - scipy==1.13.1
       - seaborn==0.13.2
@@ -292,4 +292,5 @@ dependencies:
       - wrapt==1.10.11
       - zict==3.0.0
       - zipp==3.19.2
+      - git+https://github.com/oxwhirl/smacv2.git
 prefix: /home/miniconda3/envs/srmt_env

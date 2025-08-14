@@ -19,23 +19,23 @@ For example, SRMT with reward functions from the [paper](https://arxiv.org/abs/2
 
 Sparse reward function:
 ```bash
-python train.py --experiment=<name of the folder to store checkpoints> --attn_core=true --use_rnn=false --core_memory=true --const_reward=true --intrinsic_target_reward=0 --seed=<random seed>
+python train_smac.py --experiment=<name of the folder to store checkpoints> --attn_core=true --use_rnn=false --core_memory=true --const_reward=true --intrinsic_target_reward=0 --seed=<random seed>
 ```
 Dense reward function:
 ```bash
-python3 train.py --experiment=<name of the folder to store checkpoints> --attn_core=true --use_rnn=false --core_memory=true --const_reward=true --seed=<random seed>
+python3 train_smac.py --experiment=<name of the folder to store checkpoints> --attn_core=true --use_rnn=false --core_memory=true --const_reward=true --seed=<random seed>
 ```
 Moving Negative reward function:
 ```bash
-python3 train.py --experiment=<name of the folder to store checkpoints> --attn_core=true --use_rnn=false --core_memory=true --any_move_reward=true --seed=<random seed>
+python3 train_smac.py --experiment=<name of the folder to store checkpoints> --attn_core=true --use_rnn=false --core_memory=true --any_move_reward=true --seed=<random seed>
 ```
 Directional reward function:
 ```bash
-python3 train.py --experiment=<name of the folder to store checkpoints> --attn_core=true --use_rnn=false --core_memory=true --target_reward=true --positive_reward=true --intrinsic_target_reward=0.005 --seed=<random seed>
+python3 train_smac.py --experiment=<name of the folder to store checkpoints> --attn_core=true --use_rnn=false --core_memory=true --target_reward=true --positive_reward=true --intrinsic_target_reward=0.005 --seed=<random seed>
 ```
 Directional Negative reward function:
 ```bash
-python3 train.py --experiment=<name of the folder to store checkpoints> --attn_core=true --use_rnn=false --core_memory=true --target_reward=true --reversed_reward=true --seed=<random seed>
+python3 train_smac.py --experiment=<name of the folder to store checkpoints> --attn_core=true --use_rnn=false --core_memory=true --target_reward=true --reversed_reward=true --seed=<random seed>
 ```
 
 
@@ -61,6 +61,24 @@ To avoid performance issues, it is recommended to set the following environment 
 export OMP_NUM_THREADS="1" 
 export MKL_NUM_THREADS="1" 
 export OPENBLAS_NUM_THREADS="1"
+```
+
+
+## SMACv2
+### Training
+**SRMT** training for SMACv2 is done with the `smac/train_smac.py` script. Script supports same **SRMT** command line arguments as in original training.
+`map_config` argument is used to specify path to SMACv2 scenario config file.
+
+``` bash
+python -m smac_eval.train_smac \
+--experiment=exp_4 \
+--seed=3 \
+--batch_size=12_000 \
+--rollout=10 \
+--num_workers=4 \
+--num_envs_per_worker=3 \
+--train_for_env_steps=15_000_000 \
+--map_config=smac_eval/configs/sc2_gen_protoss.yaml
 ```
 
 ## Citation
