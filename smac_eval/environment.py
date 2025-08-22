@@ -4,6 +4,7 @@ import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 from sample_factory.envs.env_utils import register_env
+from sample_factory.utils.attr_dict import AttrDict
 from smacv2.env import StarCraftCapabilityEnvWrapper
 
 from smac_eval.training_config import SMACv2Config
@@ -28,7 +29,10 @@ class SMACv2Env(gym.Env):
         super().__init__()
         self.episode_reward_sum = 0
         self.name = full_env_name
-        self.cfg = cfg.__dict__ or {}
+        if isinstance(cfg, AttrDict):
+            self.cfg = cfg
+        else:
+            self.cfg = cfg.__dict__ or {}
         self.env_config = env_config or {}
 
         # Unpack SMACv2 config

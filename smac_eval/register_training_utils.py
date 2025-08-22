@@ -1,11 +1,13 @@
 import numpy as np
 from sample_factory.algo.runners.runner import AlgoObserver, Runner
 from sample_factory.algo.utils.context import global_model_factory
+from sample_factory.model.actor_critic import ActorCritic, obs_space_without_action_mask
 from sample_factory.model.encoder import Encoder
-from sample_factory.utils.typing import Config, ObsSpace, PolicyID
+from sample_factory.utils.typing import ActionSpace, Config, ObsSpace, PolicyID
 from sample_factory.utils.utils import log
 from tensorboardX import SummaryWriter
 
+from smac_eval.actor_critic import MultiModelActorCritic
 from smac_eval.encoder import FCNNEncoder
 
 
@@ -38,3 +40,19 @@ def smacv2_extra_summaries(runner: Runner, policy_id: PolicyID, summary_writer: 
 class CustomExtraSummariesObserver(AlgoObserver):
     def extra_summaries(self, runner: Runner, policy_id: PolicyID, writer: SummaryWriter, env_steps: int) -> None:
         smacv2_extra_summaries(runner, policy_id, writer, env_steps)
+
+
+def make_custom_actor_critic(cfg: Config, obs_space: ObsSpace, action_space: ActionSpace) -> ActorCritic:
+    from sample_factory.algo.utils.context import global_model_factory
+
+    model_factory = global_model_factory()
+    obs_space = obs_space_without_action_mask(obs_space)
+
+    if cfg.actor_critic_share_weights:
+        return MultiModelActorCritic(model_factory, obs_space, action_space, cfg)
+    else:
+        raise NotImplementedError(f'Actor critic separate weights not implemented.')
+
+
+def register_custom_actor_critic():
+    global_model_factory().register_actor_critic_factory(make_custom_actor_critic)

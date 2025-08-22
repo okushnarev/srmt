@@ -1,6 +1,6 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, root_validator, validator
 
 from smac_eval.encoder import FCNNEncoderConfig
 from srmt.model import CoreConfig
@@ -74,19 +74,17 @@ class EnvironmentSMACv2Config(BaseModel):
     env_id: int = None
 
 
-
 class ExperimentSMACv2Config(BaseModel):
     environment: EnvironmentSMACv2Config = EnvironmentSMACv2Config()
     encoder: FCNNEncoderConfig = FCNNEncoderConfig(
         num_outputs=256,  # Must be equal core_hidden_size
-        hidden_layers=[64, 128],
-        dropout=0.1,
+        hidden_layers=[],
+        dropout=0.2,
     )
-
 
     core: CoreConfig = CoreConfig(
         core_hidden_size=256,
-        num_attention_heads=8,
+        num_attention_heads=4,
         max_position_embeddings=16384,
     )
 
@@ -132,9 +130,16 @@ class ExperimentSMACv2Config(BaseModel):
     stats_avg: int = 10
     train_for_env_steps: int = 15_000_000
 
+    pbt_mix_policies_in_one_env: bool = False
+    num_policies: int = 1
+
     seed: Optional[int] = 42
 
+    adaptive_stddev: Optional[bool] = True
+    mode: Literal['PPO', 'IPPO'] = 'PPO'
+
     lr_schedule: str = 'kl_adaptive_minibatch'
+    lr_adaptive_min: float = 1e-6
 
     experiment: str = 'exp_smacv2'
     train_dir: str = 'experiments/train_dir'
@@ -144,10 +149,11 @@ class ExperimentSMACv2Config(BaseModel):
     env: Literal['SMAC-v2'] = 'SMAC-v2'
     serial_mode: bool = False
 
-    @validator('core', always=True)
-    def set_core_max_position_embeddings(cls, core, values):
-        if 'batch_size' in values:
-            core.max_position_embeddings = values['batch_size']
-        return core
+    @root_validator
+    def ensure_num_outputs_matches_core(cls, values):
+        encoder_cfg = values['encoder']
+        core_cfg = values['core']
 
-
+        if encoder_cfg.num_outputs != core_cfg.core_hidden_size:
+            encoder_cfg.num_outputs = core_cfg.core_hidden_size
+        return values

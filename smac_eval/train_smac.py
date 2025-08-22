@@ -1,19 +1,9 @@
 from sys import argv
 
-from sample_factory.cfg.arguments import parse_full_cfg, parse_sf_args
-
 from smac_eval.environment import get_smacv2_obs_shape
 from smac_eval.training_config import ExperimentSMACv2Config, SMACv2Config
-from smac_eval.training_utils import run_smacv2
+from smac_eval.training_utils import create_sf_config_smacv2, run_smacv2, run_smacv2_IPPO
 
-from srmt.model import TransformerCore
-
-def create_sf_config_smacv2(exp: ExperimentSMACv2Config):
-    custom_argv = [f'--env={exp.env}']
-    parser, partial_cfg = parse_sf_args(argv=custom_argv, evaluation=False)
-    parser.set_defaults(**exp.dict())
-    final_cfg = parse_full_cfg(parser, argv=custom_argv)
-    return final_cfg
 
 def recursive_update(experiment: dict, key, value):
     if key in experiment:
@@ -25,6 +15,7 @@ def recursive_update(experiment: dict, key, value):
                 if recursive_update(v, key, value):
                     return True
         return False
+
 
 def update_dict(target_dict, keys, values):
     for key, value in zip(keys, values):
@@ -66,7 +57,11 @@ def main():
     experiment['environment']['obs_shape'] = obs_shape
     experiment['environment']['grid_config']['num_agents'] = \
         experiment['environment']['env_extra_config']['capability_config']['n_units']
-    run_smacv2(config=experiment)
+    match experiment['mode']:
+        case 'IPPO':
+            run_smacv2_IPPO(config=experiment)
+        case 'PPO', _:
+            run_smacv2(config=experiment)
 
 
 if __name__ == '__main__':

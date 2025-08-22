@@ -18,8 +18,6 @@ class FCNNEncoderConfig(BaseModel):
 
     @validator('hidden_layers')
     def _nonempty_and_positive(cls, v: List[int]) -> List[int]:
-        if len(v) == 0:
-            raise ValueError('hidden_layers must contain at least one layer')
         if any(h <= 0 for h in v):
             raise ValueError('hidden_layers must all be > 0')
         return v
